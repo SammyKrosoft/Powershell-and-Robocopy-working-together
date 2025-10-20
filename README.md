@@ -72,7 +72,7 @@ It’s ideal for backups, folder mirroring, and advanced copy operations with us
 
 ## 🖼 GUI Screenshot
 
-<https://via.placeholder.com/800x500.png?text=Folder+Synchroniser+GUI>
+<placeholder for later>
 
 *(Replace the placeholder with an actual screenshot of the running script GUI.)*
 
