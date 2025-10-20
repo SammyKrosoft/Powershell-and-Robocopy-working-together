@@ -118,6 +118,3 @@ Ended : Mon Oct 20 14:35:14 2025
 *   Settings persist for next run.
 
 ***
-
-✅ This README is **GitHub-ready**.  
-Would you like me to **also provide the actual GUI screenshot template (PowerShell running)** so you can capture and upload easily? Or keep the placeholder?
