@@ -71,9 +71,8 @@ It’s ideal for backups, folder mirroring, and advanced copy operations with us
 
 ## 🖼 GUI Screenshot
 
-<placeholder for later>
+<img width="536" height="533" alt="image" src="https://github.com/user-attachments/assets/35b80965-c324-4d8b-afc9-e91fd8206dce" />
 
-*(Replace the placeholder with an actual screenshot of the running script GUI.)*
 
 ***
 
