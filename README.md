@@ -1,7 +1,8 @@
-Script and Readme generated with M365 Copilot !!!
 ***
 
 # 📂 Folder Synchroniser (PowerShell + Robocopy)
+
+Script and Readme generated with M365 Copilot !!!
 
 ## ✅ Overview
 
