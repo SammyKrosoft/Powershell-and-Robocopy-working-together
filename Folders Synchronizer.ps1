@@ -1,4 +1,3 @@
-
 <#
 .SYNOPSIS
     Folder Synchroniser with GUI using Robocopy.
@@ -23,6 +22,7 @@
         * Checkbox to enable multi-threading.
         * Customisable thread count (/MT:<threads>) for faster performance.
     - Default retry and wait settings (/R:2 /W:5) for quick error handling.
+    - Option to automatically open log file after completion.
 
 .EXAMPLE
     Scenario 1: Mirror mode with multi-threading
@@ -59,6 +59,7 @@ $previousSettings = @{
     MirrorChecked = $false
     MultiThreadChecked = $false
     ThreadCount = "16"
+    OpenLogChecked = $false
 }
 if (Test-Path $configFile) {
     $json = Get-Content $configFile -Raw
@@ -67,9 +68,28 @@ if (Test-Path $configFile) {
 
 # Create the form
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Folder Synchroniser"
+$form.Text = "Folder Synchroniser v1.0"
 $form.Size = New-Object System.Drawing.Size(550, 540)
 $form.StartPosition = "CenterScreen"
+
+# Load icon from Windows DLL
+$iconPath = "$env:SystemRoot\System32\moricons.dll"
+$iconIndex = 100  # Change this number to select different icons
+
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class IconExtractor {
+    [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+    public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
+}
+"@
+
+$iconHandle = [IconExtractor]::ExtractIcon([IntPtr]::Zero, $iconPath, $iconIndex)
+if ($iconHandle -ne [IntPtr]::Zero) {
+    $form.Icon = [System.Drawing.Icon]::FromHandle($iconHandle)
+}
+
 
 # Labels
 $labelSource = New-Object System.Windows.Forms.Label
@@ -134,25 +154,36 @@ $browseLog.Add_Click({ if ($fileDialog.ShowDialog() -eq "OK") { $textLog.Text = 
 $checkMirror = New-Object System.Windows.Forms.CheckBox
 $checkMirror.Text = "Mirror (Deletes extra files)"
 $checkMirror.Location = New-Object System.Drawing.Point(150, 160)
+$checkMirror.Width = 200
 $checkMirror.Checked = [bool]$previousSettings.MirrorChecked
 $form.Controls.Add($checkMirror)
 
 $checkMT = New-Object System.Windows.Forms.CheckBox
 $checkMT.Text = "Enable Multi-threading"
 $checkMT.Location = New-Object System.Drawing.Point(150, 190)
+$checkMT.Width = 160
 $checkMT.Checked = [bool]$previousSettings.MultiThreadChecked
 $form.Controls.Add($checkMT)
 
 $labelThreads = New-Object System.Windows.Forms.Label
 $labelThreads.Text = "Threads:"
-$labelThreads.Location = New-Object System.Drawing.Point(300, 190)
+$labelThreads.Location = New-Object System.Drawing.Point(320, 192)
+$labelThreads.AutoSize = $true
 $form.Controls.Add($labelThreads)
 
 $textThreads = New-Object System.Windows.Forms.TextBox
-$textThreads.Location = New-Object System.Drawing.Point(360, 188)
+$textThreads.Location = New-Object System.Drawing.Point(380, 190)
 $textThreads.Width = 50
 $textThreads.Text = $previousSettings.ThreadCount
 $form.Controls.Add($textThreads)
+
+# New checkbox for opening log file
+$checkOpenLog = New-Object System.Windows.Forms.CheckBox
+$checkOpenLog.Text = "Open log file after completion"
+$checkOpenLog.Location = New-Object System.Drawing.Point(150, 220)
+$checkOpenLog.Width = 220
+$checkOpenLog.Checked = [bool]$previousSettings.OpenLogChecked
+$form.Controls.Add($checkOpenLog)
 
 # Progress bar
 $progressBar = New-Object System.Windows.Forms.ProgressBar
@@ -172,12 +203,12 @@ $form.Controls.Add($statusLabel)
 # Buttons
 $syncButton = New-Object System.Windows.Forms.Button
 $syncButton.Text = "Synchronise"
-$syncButton.Location = New-Object System.Drawing.Point(150, 250)
+$syncButton.Location = New-Object System.Drawing.Point(150, 270)
 $form.Controls.Add($syncButton)
 
 $cancelButton = New-Object System.Windows.Forms.Button
 $cancelButton.Text = "Cancel"
-$cancelButton.Location = New-Object System.Drawing.Point(280, 250)
+$cancelButton.Location = New-Object System.Drawing.Point(280, 270)
 $cancelButton.Enabled = $false
 $form.Controls.Add($cancelButton)
 
@@ -200,6 +231,7 @@ $syncButton.Add_Click({
             MirrorChecked = $checkMirror.Checked
             MultiThreadChecked = $checkMT.Checked
             ThreadCount = $textThreads.Text
+            OpenLogChecked = $checkOpenLog.Checked
         }
         $jsonOut = (New-Object System.Web.Script.Serialization.JavaScriptSerializer).Serialize($settings)
         Set-Content -Path $configFile -Value $jsonOut
@@ -259,6 +291,12 @@ $syncButton.Add_Click({
         $progressBar.Visible = $false
         $cancelButton.Enabled = $false
         $statusLabel.Text = "Status: Completed"
+        
+        # Open log file if checkbox is checked
+        if ($checkOpenLog.Checked -and (Test-Path $logPath)) {
+            Start-Process notepad.exe -ArgumentList $logPath
+        }
+        
         [System.Windows.Forms.MessageBox]::Show("Synchronisation completed.`nLog saved at: $logPath", "Info")
     }
 })
