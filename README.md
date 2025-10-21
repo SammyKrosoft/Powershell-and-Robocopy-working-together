@@ -21,6 +21,7 @@ It’s ideal for backups, folder mirroring, and advanced copy operations with us
 *   **Cancel button** to stop sync mid-run
 *   **Persistence** of last settings (folders, checkboxes, thread count)
 *   **Multi-threading support** with custom thread count (/MT)
+*   Ability to **open log file** after completion
 *   Auto log naming:  
     `RoboCopyLog_yyyy-MM-dd_HH-mm-ss.log`
 
@@ -72,8 +73,7 @@ It’s ideal for backups, folder mirroring, and advanced copy operations with us
 
 ## 🖼 GUI Screenshot
 
-<img width="536" height="533" alt="image" src="https://github.com/user-attachments/assets/35b80965-c324-4d8b-afc9-e91fd8206dce" />
-
+<img width="579" height="533" alt="image" src="https://github.com/user-attachments/assets/ad2321a8-5a93-4e85-8317-dab42f975f11" />
 
 ***
 
